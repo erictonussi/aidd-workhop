@@ -1,0 +1,39 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This is a Nuxt 4 project. 
+
+<directory-structure-rules>
+The project follows these directory structure rules.
+(comments marked with # next the the file/folder name explain purpose further)
+
+```
+.output/
+.nuxt/
+app/
+  assets/
+  components/
+  composables/
+  layouts/
+  middleware/
+  pages/
+  plugins/
+  utils/
+  app.config.ts
+  app.vue
+layers/
+modules/
+node_modules/
+public/
+server/
+  api/
+  middleware/
+  plugins/
+  routes/
+  utils/
+shared/ # utility functions for use on both server and client side (must be compatible with BOTH environments)
+nuxt.config.ts
+```
+<directory-structure-rules>
