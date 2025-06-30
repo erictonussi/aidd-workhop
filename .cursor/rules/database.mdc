@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This project uses drizzle as a databse ORM. 
+
+Project Schema - [drizzle-schema.ts](mdc:server/db/drizzle-schema.ts)

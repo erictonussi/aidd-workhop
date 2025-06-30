@@ -6,4 +6,17 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   modules: ["@nuxt/eslint"],
+  nitro: {
+    experimental: {
+      openAPI: true,
+    },
+    openAPI: {
+      production: "prerender",
+      meta: {
+        title: "My Awesome Project",
+        description: "This might become the next big thing.",
+        version: "1.0",
+      },
+    },
+  },
 });
