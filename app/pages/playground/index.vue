@@ -1,4 +1,5 @@
 <script setup>
+// no need to manually register playground pages, they are automatically registered
 const router = useRouter();
 const routes = router.getRoutes();
 const items = routes.filter((route) => route.path.startsWith("/playground/"));
