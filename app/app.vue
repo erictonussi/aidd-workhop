@@ -1,89 +1,200 @@
 <script setup lang="ts">
-// Example user data
-const users = [
-  {
-    name: "Sarah Johnson",
-    email: "sarah.johnson@example.com",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
-    title: "Senior Frontend Developer",
-    company: "Tech Innovators Inc.",
-    location: "San Francisco, CA",
-    bio: "Passionate about creating beautiful and functional user interfaces. Love working with Vue.js and modern web technologies.",
-    verified: true,
-  },
-  {
-    name: "Alex Chen",
-    email: "alex.chen@example.com",
-    title: "Product Designer",
-    company: "Design Studio",
-    location: "New York, NY",
-    bio: "Creative problem solver with a focus on user experience design.",
-    verified: false,
-  },
-  {
-    name: "Michael Rodriguez",
-    email: "michael.rodriguez@example.com",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
-    title: "Full Stack Developer",
-    company: "StartupXYZ",
-    location: "Austin, TX",
-    verified: true,
-  },
-];
-
-// Event handlers
-const handleContact = (user: any) => {
-  console.log("Contact clicked for:", user.name);
-  // You could implement actual contact logic here
-};
-
-const handleFollow = (user: any) => {
-  console.log("Follow clicked for:", user.name);
-  // You could implement actual follow logic here
-};
+// Demo showcasing Shadcn Vue with Tailwind CSS v4
+useHead({
+  title: "Shadcn Vue + Nuxt 4 + Tailwind v4",
+  meta: [
+    {
+      name: "description",
+      content:
+        "A demo showcasing Shadcn Vue components with Nuxt 4 and Tailwind CSS v4",
+    },
+  ],
+});
 </script>
 
 <template>
-  <div class="app">
-    <div class="app__header">
-      <h1>User Profile Cards Demo</h1>
-      <p>
-        A collection of beautiful user profile cards built with Vue 3 and Nuxt 4
-      </p>
-    </div>
+  <div class="min-h-screen bg-background text-foreground">
+    <!-- Header -->
+    <header class="bg-card border-b border-border">
+      <div class="container mx-auto px-4 py-6">
+        <h1 class="text-3xl font-bold text-primary">
+          🎉 Shadcn Vue + Nuxt 4 + Tailwind v4
+        </h1>
+        <p class="text-muted-foreground mt-2">
+          A modern setup showcasing beautiful UI components with the latest
+          technologies
+        </p>
+      </div>
+    </header>
 
-    <div class="app__content">
-      <!-- Standard profile cards -->
-      <section class="app__section">
-        <h2>Standard Profile Cards</h2>
-        <div class="app__grid">
-          <UserProfileCard
-            v-for="user in users"
-            :key="user.email"
-            :user="user"
-            @contact="handleContact"
-            @follow="handleFollow"
-          />
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 space-y-8">
+      <!-- Success Message -->
+      <div
+        class="bg-green-50 border border-green-200 rounded-lg p-4 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-300"
+      >
+        <h2 class="font-semibold mb-2">✅ Installation Successful!</h2>
+        <p>
+          Shadcn Vue has been successfully installed with Tailwind CSS v4 and
+          Nuxt 4. Here's what's included:
+        </p>
+        <ul class="list-disc list-inside mt-2 space-y-1">
+          <li>Tailwind CSS v4 with new @theme directive</li>
+          <li>OKLCH color space for better color accuracy</li>
+          <li>Dark mode support with @custom-variant</li>
+          <li>Shadcn Vue components ready to use</li>
+          <li>TypeScript support</li>
+        </ul>
+      </div>
+
+      <!-- Button Examples -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Button Components</h2>
+        <div class="flex flex-wrap gap-4">
+          <Button>Default Button</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="destructive">Destructive</Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="link">Link</Button>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <Button size="sm">Small</Button>
+          <Button size="default">Default</Button>
+          <Button size="lg">Large</Button>
+          <Button size="icon">⚙️</Button>
         </div>
       </section>
 
-      <!-- Compact profile cards -->
-      <section class="app__section">
-        <h2>Compact Profile Cards</h2>
-        <div class="app__grid">
-          <UserProfileCard
-            v-for="user in users"
-            :key="`compact-${user.email}`"
-            :user="user"
-            :compact="true"
-            :show-contact-button="false"
-            @follow="handleFollow"
-          />
+      <!-- Color System Demo -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Tailwind v4 Color System (OKLCH)</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div
+            class="bg-primary text-primary-foreground p-4 rounded-lg text-center"
+          >
+            <div class="font-semibold">Primary</div>
+            <div class="text-sm opacity-90">OKLCH colors</div>
+          </div>
+          <div
+            class="bg-secondary text-secondary-foreground p-4 rounded-lg text-center"
+          >
+            <div class="font-semibold">Secondary</div>
+            <div class="text-sm opacity-90">Better accuracy</div>
+          </div>
+          <div
+            class="bg-accent text-accent-foreground p-4 rounded-lg text-center"
+          >
+            <div class="font-semibold">Accent</div>
+            <div class="text-sm opacity-90">Future-proof</div>
+          </div>
+          <div
+            class="bg-muted text-muted-foreground p-4 rounded-lg text-center"
+          >
+            <div class="font-semibold">Muted</div>
+            <div class="text-sm opacity-90">Consistent</div>
+          </div>
         </div>
       </section>
-    </div>
+
+      <!-- Dark Mode Demo -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Dark Mode Support</h2>
+        <div class="bg-card border border-border rounded-lg p-6">
+          <p class="text-card-foreground mb-4">
+            Dark mode is automatically supported through CSS custom properties.
+            The setup uses the new @custom-variant syntax from Tailwind v4.
+          </p>
+          <div class="bg-popover border border-border rounded p-4">
+            <p class="text-popover-foreground text-sm">
+              This card adapts to both light and dark themes seamlessly.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features List -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">What's Included</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-card border border-border rounded-lg p-6">
+            <h3 class="font-semibold text-lg mb-3">🎨 Tailwind CSS v4</h3>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li>• New @theme directive for better organization</li>
+              <li>• OKLCH color space for accurate colors</li>
+              <li>• Improved performance and smaller bundles</li>
+              <li>• No config file needed</li>
+            </ul>
+          </div>
+
+          <div class="bg-card border border-border rounded-lg p-6">
+            <h3 class="font-semibold text-lg mb-3">🧩 Shadcn Vue</h3>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li>• Copy-paste component approach</li>
+              <li>• Full customization control</li>
+              <li>• TypeScript support</li>
+              <li>• Accessibility built-in</li>
+            </ul>
+          </div>
+
+          <div class="bg-card border border-border rounded-lg p-6">
+            <h3 class="font-semibold text-lg mb-3">⚡ Nuxt 4</h3>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li>• Auto-imports for components</li>
+              <li>• Server-side rendering</li>
+              <li>• File-based routing</li>
+              <li>• Full-stack capabilities</li>
+            </ul>
+          </div>
+
+          <div class="bg-card border border-border rounded-lg p-6">
+            <h3 class="font-semibold text-lg mb-3">🌙 Dark Mode</h3>
+            <ul class="space-y-2 text-sm text-muted-foreground">
+              <li>• Automatic theme switching</li>
+              <li>• CSS custom properties</li>
+              <li>• Consistent across components</li>
+              <li>• No additional configuration needed</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Next Steps -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Next Steps</h2>
+        <div
+          class="bg-blue-50 border border-blue-200 rounded-lg p-6 dark:bg-blue-900/20 dark:border-blue-800"
+        >
+          <h3 class="font-semibold text-blue-900 dark:text-blue-300 mb-3">
+            Ready to build! 🚀
+          </h3>
+          <div class="text-blue-800 dark:text-blue-300 space-y-2">
+            <p>You can now add more Shadcn Vue components:</p>
+            <code
+              class="bg-blue-100 dark:bg-blue-900/50 px-2 py-1 rounded text-sm"
+            >
+              npx shadcn-vue@latest add dialog card input label
+            </code>
+            <p class="mt-2">
+              Or explore all available components at
+              <a href="https://www.shadcn-vue.com" class="underline"
+                >shadcn-vue.com</a
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-card border-t border-border mt-16">
+      <div
+        class="container mx-auto px-4 py-6 text-center text-muted-foreground"
+      >
+        <p>Built with ❤️ using Shadcn Vue, Nuxt 4, and Tailwind CSS v4</p>
+      </div>
+    </footer>
   </div>
 </template>
 
