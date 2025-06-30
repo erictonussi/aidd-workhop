@@ -1,0 +1,21 @@
+---
+description: 
+globs: server/api/**/*.ts
+alwaysApply: false
+---
+* All API endpoints follow the OpenAPI specification.
+* Document all endpoints with at the top of the files (after imports) like this:
+
+```typescript
+defineRouteMeta({
+  openAPI: {
+    tags: ["test"],
+    description: "Test route description",
+    parameters: [{ in: "query", name: "test", required: true }],
+  },
+});
+
+export default defineEventHandler(async () => {
+ // The endpoint logic here
+});
+```
