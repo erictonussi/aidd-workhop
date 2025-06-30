@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  modules: ["@nuxt/eslint", "shadcn-nuxt"],
+  modules: ["@nuxt/eslint", "shadcn-nuxt", "@nuxt/test-utils/module"],
   shadcn: {
     /**
      * Prefix for all the imported component
