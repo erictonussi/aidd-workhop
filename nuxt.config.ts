@@ -16,7 +16,6 @@ export default defineNuxtConfig({
     "shadcn-nuxt",
     "@nuxt/test-utils/module",
     "@nuxt/icon",
-    "@nuxtjs/mdc",
   ],
   shadcn: {
     /**

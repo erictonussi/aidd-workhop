@@ -1,3 +1,5 @@
+<!-- eslint-disable -->
+<!--Remove comment above to see all violations-->
 <script setup>
 // ❌ BAD: Using $fetch() in script setup root level
 // Should use useFetch() or useAsyncData() instead

@@ -8,7 +8,7 @@ test.describe("API Routes", () => {
     try {
       const response = await $fetch("/api/health");
       expect(response).toBeDefined();
-    } catch (error) {
+    } catch {
       // If no API routes exist yet, this test will be skipped
       console.warn("No API routes found - skipping API tests");
     }
@@ -28,9 +28,10 @@ test.describe("API Routes", () => {
     // Test that API requests work from the client side
     const response = await page.evaluate(async () => {
       try {
+        // eslint-disable-next-line
         const res = await fetch("/api/test");
         return res.status;
-      } catch (error) {
+      } catch {
         return 404; // Expected if no API routes exist
       }
     });
