@@ -1,5 +1,5 @@
 ---
-description: 
+description: Rules for writing unit and e2e tests
 globs: 
 alwaysApply: false
 ---
