@@ -7,17 +7,11 @@ export default {
       category: "Best Practices",
       recommended: true,
     },
-    fixable: "code",
     hasSuggestions: true,
     schema: [
       {
         type: "object",
-        properties: {
-          enforcePageLevelFetching: {
-            type: "boolean",
-            default: true,
-          },
-        },
+        properties: {},
         additionalProperties: false,
       },
     ],
@@ -30,29 +24,19 @@ export default {
         "$fetch() should not be used at script setup root level. Use useFetch() or useAsyncData() instead. Note: $fetch() returns data directly while useFetch() returns { data, error, status, etc. }",
       preferUseFetch:
         "Prefer useFetch() over useAsyncData() when making HTTP requests",
-      considerPageLevel:
-        "Consider moving data fetching to page level and passing data via props",
+      noUseFetchInFunction:
+        "useFetch() and useAsyncData() should not be used in functions, event handlers, or lifecycle hooks. Use $fetch() instead",
       useAsyncDataForComplexCases:
         "Consider useAsyncData() for complex data transformation or multiple requests",
     },
   },
 
   create(context) {
-    const options = context.options[0] || {};
-    const enforcePageLevelFetching = options.enforcePageLevelFetching !== false;
-
     let isInScriptSetup = false;
     let isInFunction = false;
     let currentFunctionDepth = 0;
     let isInEventHandler = false;
     let isInLifecycleHook = false;
-
-    // Track if we're in a Vue component vs page
-    let isPage = false;
-    let filename = context.getFilename();
-    if (filename) {
-      isPage = filename.includes("/pages/") || filename.includes("\\pages\\");
-    }
 
     function isLifecycleHookCall(node) {
       if (node.type === "CallExpression" && node.callee.type === "Identifier") {
@@ -98,28 +82,6 @@ export default {
         }
       }
       return false;
-    }
-
-    function getFetchReplacement(node) {
-      const isInRootSetup = isInScriptSetup && currentFunctionDepth === 0;
-
-      if (isInRootSetup) {
-        // In script setup root level, suggest useFetch
-        const args = node.arguments;
-        if (args.length > 0) {
-          const url = context.getSourceCode().getText(args[0]);
-          let optionsText = "";
-          if (args.length > 1) {
-            optionsText = `, ${context.getSourceCode().getText(args[1])}`;
-          }
-          return `useFetch(${url}${optionsText})`;
-        }
-        return "useFetch(url)";
-      } else {
-        // In functions, event handlers, lifecycle hooks, suggest $fetch
-        const fullCall = context.getSourceCode().getText(node);
-        return fullCall.replace("fetch(", "$fetch(");
-      }
     }
 
     return {
@@ -168,17 +130,11 @@ export default {
             context.report({
               node,
               messageId: "useFetchInSetup",
-              fix(fixer) {
-                return fixer.replaceText(node, getFetchReplacement(node));
-              },
             });
           } else if (isInFunction || isInEventHandler || isInLifecycleHook) {
             context.report({
               node,
               messageId: "use$FetchInFunction",
-              fix(fixer) {
-                return fixer.replaceText(node, getFetchReplacement(node));
-              },
             });
           }
         }
@@ -195,6 +151,20 @@ export default {
               node,
               messageId: "no$FetchInSetup",
               // No auto-fix because $fetch and useFetch have different return types
+            });
+          }
+        }
+
+        // Check for useFetch/useAsyncData usage in functions, event handlers, lifecycle hooks
+        if (
+          node.callee.type === "Identifier" &&
+          (node.callee.name === "useFetch" ||
+            node.callee.name === "useAsyncData")
+        ) {
+          if (isInFunction || isInEventHandler || isInLifecycleHook) {
+            context.report({
+              node,
+              messageId: "noUseFetchInFunction",
             });
           }
         }
@@ -246,27 +216,6 @@ export default {
                 ],
               });
             }
-          }
-        }
-
-        // Suggest page-level fetching for components
-        if (
-          enforcePageLevelFetching &&
-          !isPage &&
-          isInScriptSetup &&
-          currentFunctionDepth === 0
-        ) {
-          if (
-            (node.callee.type === "Identifier" &&
-              (node.callee.name === "useFetch" ||
-                node.callee.name === "useAsyncData")) ||
-            (node.callee.type === "Identifier" && node.callee.name === "fetch")
-          ) {
-            context.report({
-              node,
-              messageId: "considerPageLevel",
-              // Don't auto-fix this as it requires architectural changes
-            });
           }
         }
       },
