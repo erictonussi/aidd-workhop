@@ -17,17 +17,24 @@ export default defineNuxtConfig({
     "@nuxt/test-utils/module",
     "@nuxt/icon",
     "@nuxt/image",
+    "@vueuse/nuxt",
+  ],
+  components: [
+    {
+      path: "@/components",
+      pathPrefix: false,
+    },
   ],
   shadcn: {
     /**
      * Prefix for all the imported component
      */
-    prefix: "Ui",
+    prefix: "ui",
     /**
      * Directory that the component lives in.
-     * @default "./components/Ui"
+     * @default "./components/ui"
      */
-    componentDir: "./app/components/Ui",
+    componentDir: "./app/components/ui",
   },
   nitro: {
     experimental: {
