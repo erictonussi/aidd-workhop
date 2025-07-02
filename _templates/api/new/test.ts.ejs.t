@@ -2,6 +2,7 @@
 to: tests/e2e/api-<%= testName %>.spec.ts
 ---
 import { test, expect } from '@nuxt/test-utils/playwright'
+import { $fetch } from 'ofetch'
 
 test.describe('<%= method.toUpperCase() %> /api/<%= path %>', () => {
   test('should return success response', async ({ page, goto }) => {
