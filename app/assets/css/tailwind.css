@@ -141,6 +141,6 @@
   }
 }
 
-.prose {
+.prose * {
   color: inherit;
 }
