@@ -12,3 +12,4 @@ alwaysApply: false
   *  Don't use one of the hygen commands
   *  DO use the Nuxt MCP for reference
   *  Do define the return response with the `sendStream` function
+* Feel free to use `curl` to check API endpoints

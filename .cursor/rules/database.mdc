@@ -6,3 +6,4 @@ alwaysApply: true
 * This project uses drizzle as a databse ORM. 
 * Project Schema - [drizzle-schema.ts](mdc:server/db/drizzle-schema.ts)
 * On the server side, call the auto-imported `useDb()` function
+* When creating new database tables, create seeders for them (grep the structure to find existing seeders and read for inspiration)
