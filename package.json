@@ -16,7 +16,8 @@
     "test:coverage": "vitest run --coverage",
     "generate:component": "hygen component new",
     "lint": "eslint . --ext .ts,.vue --fix",
-    "typecheck": "npx nuxi typecheck"
+    "typecheck": "npx nuxi typecheck",
+    "task": "npx nuxi run nitro task run"
   },
   "dependencies": {
     "@libsql/client": "^0.15.9",

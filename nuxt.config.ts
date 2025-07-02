@@ -32,6 +32,7 @@ export default defineNuxtConfig({
   nitro: {
     experimental: {
       openAPI: true,
+      tasks: true,
     },
     openAPI: {
       production: "prerender",
