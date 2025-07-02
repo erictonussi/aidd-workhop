@@ -64,4 +64,24 @@ app/components/
   - `const myComponentRef = useTemplateRef('myComponentRef')`   
 - Always use `useTemplateRef('[ref identifier here]')` to define template refs (not `ref()`)
 
+## Icons
+
+- Nuxt Icon is installed. 
+- Display an icon with the icon component. For example:
+  - `<Icon name="lucide:refresh">
+- Rember to prefix the icon with the packname (like `lucide:`)  
+- Any iconify icon can be used
+
+# Style
+
+- Primarily use shadcn classes for color styles. For example:
+  - bg-primary
+  - text-primary-foreground
+  - bg-muted
+  - text-muted-foreground
+
+- Pair bg and text-foreground colors appropriately. For example:
+  - bg-primary and text-primary-foreground
+  - bg-muted and text-muted-foreground
+
 

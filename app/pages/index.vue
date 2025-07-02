@@ -8,6 +8,7 @@ useSeoMeta({
 <template>
   <div>
     <h1>Hello World</h1>
-    <UiButton variant="outline">Click me</UiButton>
+    <UiButton>Click me</UiButton>
+    <Icon name="lucide:home" />
   </div>
 </template>
