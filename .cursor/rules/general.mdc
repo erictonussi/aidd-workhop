@@ -50,8 +50,8 @@ nuxt.config.ts
   * [database.mdc](mdc:.cursor/rules/database.mdc) - rules for interacting with the database
   * [components.mdc](mdc:.cursor/rules/components.mdc) - rules for working with components 
 
-
 ## State Management
 
 * Only use state management external to components when necessary
 * Utilize caching with useFetch and useAsync data for as much state management for fetched data as possible otherwise use a custom composable and useState
+

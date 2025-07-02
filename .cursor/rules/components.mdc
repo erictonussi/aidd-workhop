@@ -3,9 +3,40 @@ description: rules for working with components
 globs: 
 alwaysApply: false
 ---
-* When creating a brand new stand alone component (that's not a child/tightly coupled component), use the `nlx hygen component new --name [ComponentNameHere]` from package.json* 
+
+## Creating Brand New Components
+
+* When creating a brand new component, use the `nlx hygen component new --name [ComponentNameHere]` from package.json. This creates a directory in `app/components` that will house coupled components. For example:
+```
+app/components/UserProfile
+    UserProfile.vue  // 👈 the "main" component
+    UserProfileImage.vue   // used in UserProfile.vue
+    UserProfileEdit.vue   // used in UserProfile.vue
+    UserProfile   // used in UserProfile.vue
+    UserProfile.nuxt.test.ts // 👈 test for the "main" component
+app/pages/playground
+    UserProfileDemo.vue // 👈 place to render the "main" component for visual testing and checking
+``` 
 * ALWAYS read the created files after running the hygen command.
+* If you need to add a component to an existing folder in `app/components` then do so via the normal file writing tool, but only do this if there is already a relevant directory created with hygen.
+
+## Other Component Rules
+
 * When creating template refs always name them with the `El` suffix. For example:
   * `const textareaEl = useTemplateRef('textareaEl')`  
   * Always use `useTemplateRef('[ref identifier here]')` to define template refs (not `ref()`)
   * ShadCN has components like `Textarea` that seem like native components but are not. Remember to account for that.
+
+- Shad-cn Vue is installed and all of it's components are stored in `/components/ui`. They can be for most common UI elements. Only create a new custom component is shad-cn doesn't already have a solution!! Rely primarily on ShadCN components!
+- NEVER try to generate a ShadCN component, all supported components are already installed
+- Do NOT create long components with a lot of responsibilities. Instead, break components down into smaller, more focused components
+- Create small, focused components (< 50 lines)
+- break complex logic into composables or utility functions
+- Always use TypeScript to define all components.
+- Use Typescript to define component props and emits.
+- use JS docs to document component props and emits
+- Use script setup
+- Provide the component sections in the following order:
+  - script
+  - template
+  - style 

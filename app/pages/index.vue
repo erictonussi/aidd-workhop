@@ -1,12 +1,10 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: "Home",
-  description: "Home page",
+  title: "AI Chat Assistant",
+  description: "Chat with an AI assistant powered by advanced language models",
 });
 </script>
 
 <template>
-  <div>
-    <h1>Hello World</h1>
-  </div>
+  <ChatContainer />
 </template>
