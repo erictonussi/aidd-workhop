@@ -16,17 +16,18 @@ export default defineNuxtConfig({
     "shadcn-nuxt",
     "@nuxt/test-utils/module",
     "@nuxt/icon",
+    "@nuxt/image",
   ],
   shadcn: {
     /**
      * Prefix for all the imported component
      */
-    prefix: "",
+    prefix: "Ui",
     /**
      * Directory that the component lives in.
-     * @default "./components/ui"
+     * @default "./components/Ui"
      */
-    componentDir: "./app/components/ui",
+    componentDir: "./app/components/Ui",
   },
   nitro: {
     experimental: {
