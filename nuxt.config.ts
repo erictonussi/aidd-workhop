@@ -3,6 +3,10 @@ import tailwindcss from "@tailwindcss/vite";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
+  experimental: {
+    componentIslands: true,
+  },
+
   future: {
     compatibilityVersion: 4,
   },
@@ -18,6 +22,7 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@nuxt/image",
     "@vueuse/nuxt",
+    "@nuxtjs/mdc",
   ],
   components: [
     {
