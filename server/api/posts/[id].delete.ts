@@ -1,19 +1,18 @@
----
-to: server/api/<%= plural %>/[id].get.ts
----
 import { z } from "zod";
+import { eq } from "drizzle-orm";
+import { posts } from "../../db/drizzle-schema";
 
 defineRouteMeta({
   // TODO: fill out meta as needed
   openAPI: {
-    tags: ["<%= plural %>"],
-    description: "Get a <%= name %> by ID",
+    tags: ["posts"],
+    description: "Delete a blog post by ID",
     parameters: [
       { in: "path", name: "id", required: true, schema: { type: "string" } },
     ],
     responses: {
       200: {
-        description: "<%= Name %> found",
+        description: "Blog post deleted successfully",
         content: {
           "application/json": {
             schema: {
@@ -26,11 +25,9 @@ defineRouteMeta({
                 message: { type: "string" },
                 data: {
                   type: "object",
-                  // TODO: Customize your properties here
                   properties: {
-                    id: { type: "string" },
-                    someField: { type: "string" },
-                    
+                    id: { type: "number" },
+                    deleted: { type: "boolean" },
                   },
                 },
               },
@@ -39,7 +36,7 @@ defineRouteMeta({
         },
       },
       404: {
-        description: "<%= Name %> not found",
+        description: "Post not found",
       },
     },
   },
@@ -48,17 +45,35 @@ defineRouteMeta({
 export default defineApiEventHandler({
   // TODO: fill out validation as needed
   validation: z.object({
-    id: z.string().min(1, "ID is required"),
+    id: z
+      .string()
+      .min(1, "ID is required")
+      .transform((val) => parseInt(val, 10)),
   }),
+  // guards: [userIsLoggedInGuard], // TODO: Add authentication if needed
   handler: async (event, { id }) => {
     const db = useDb();
-    
-    // TODO: implement API functionality
-    
-    // TODO: modify response as needed
+
+    // First, check if the post exists
+    const [existingPost] = await db
+      .select()
+      .from(posts)
+      .where(eq(posts.id, id))
+      .limit(1);
+
+    if (!existingPost) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: "Post not found",
+      });
+    }
+
+    // Delete the post
+    await db.delete(posts).where(eq(posts.id, id));
+
     return defineApiResponse(event, {
-      data: { id }, // TODO: Replace with actual <%= name %> data
-      statusMessage: "<%= Name %> retrieved successfully",
+      data: { id, deleted: true },
+      statusMessage: "Post deleted successfully",
     });
   },
-}); 
+});

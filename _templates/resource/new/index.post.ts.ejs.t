@@ -30,7 +30,7 @@ defineRouteMeta({
             schema: {
               type: "object",
               properties: {
-                error: { type: "boolean" },
+                error: { type: "boolean", const: false },
                 url: { type: "string" },
                 statusMessage: { type: "string" },
                 statusCode: { type: "number" },
