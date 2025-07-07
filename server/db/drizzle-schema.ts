@@ -24,7 +24,7 @@ const float32Array = customType<{
   },
 });
 
-// 2. Define the MCP docs table using the custom vector type
+// 2. Define the company policies table using the custom vector type
 export const companyPolicies = sqliteTable("company_policies", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   filepath: text("filepath").notNull(),
