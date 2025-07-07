@@ -18,7 +18,7 @@ defineRouteMeta({
             schema: {
               type: "object",
               properties: {
-                error: { type: "boolean", enum: [false] },
+                error: { type: "boolean", const: false },
                 url: { type: "string" },
                 statusMessage: { type: "string" },
                 statusCode: { type: "number" },
