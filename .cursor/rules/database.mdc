@@ -1,7 +1,7 @@
 ---
-description: 
+description: rules for working with the database
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 * This project uses drizzle as a databse ORM. 
 * Project Schema - [drizzle-schema.ts](mdc:server/db/drizzle-schema.ts)
@@ -9,7 +9,7 @@ alwaysApply: true
 * Seeds should be created as nitro tasks:
 
 ```ts
-// server/tasks/seed/postsSeed.ts
+// server/tasks/seed/posts.ts
 export default defineTask({
   meta: {
       name: "seed:posts",
