@@ -1,15 +1,16 @@
 import { z } from "zod";
-import { eq, count } from "drizzle-orm";
+import { eq, count, sql } from "drizzle-orm";
 import { conversations, messages } from "../../../db/drizzle-schema";
 import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { generateConversationTitle } from "../../../utils/generateConversationTitle";
+import { schema } from "../../../utils/db";
 
 defineRouteMeta({
   openAPI: {
     tags: ["conversations"],
     description:
-      "Send a message to a conversation and get a streaming AI response",
+      "Send a message to a conversation and get a streaming AI response about company policies",
     parameters: [
       { in: "path", name: "id", required: true, schema: { type: "string" } },
     ],
@@ -28,7 +29,7 @@ defineRouteMeta({
     },
     responses: {
       200: {
-        description: "Streaming AI response",
+        description: "Streaming AI response about company policies",
         content: {
           "text/plain": {
             schema: {
@@ -43,6 +44,55 @@ defineRouteMeta({
     },
   },
 });
+
+async function getQueryEmbedding(
+  query: string,
+  openaiApiKey: string
+): Promise<number[]> {
+  const openai = new (await import("openai")).default({
+    apiKey: openaiApiKey,
+  });
+
+  const res = await openai.embeddings.create({
+    model: "text-embedding-ada-002",
+    input: query,
+  });
+
+  if (!res.data[0]) throw new Error("Failed to generate embedding");
+
+  return res.data[0].embedding;
+}
+
+// topK is the number of results to return
+async function searchCompanyPolicies(
+  query: string,
+  openaiApiKey: string,
+  topK = 5
+) {
+  const db = useDb();
+  const embedding = await getQueryEmbedding(query, openaiApiKey);
+
+  // Use vector_top_k to find the most similar vectors, then join with the actual table
+  // vector_top_k returns records with the primary key/rowid of matching rows
+  const matches = await db
+    .select({
+      id: sql`vt.id`,
+      content: schema.companyPolicies.content,
+      filepath: schema.companyPolicies.filepath,
+      chunkNumber: schema.companyPolicies.chunkNumber,
+    })
+    .from(
+      sql`vector_top_k('company_policies_vector_idx', vector32(${JSON.stringify(
+        embedding
+      )}), ${topK}) as vt`
+    )
+    .leftJoin(
+      schema.companyPolicies,
+      sql`${schema.companyPolicies.id} = vt.id`
+    );
+
+  return matches;
+}
 
 export default defineApiEventHandler({
   validation: z.object({
@@ -91,6 +141,13 @@ export default defineApiEventHandler({
       role: "user",
     });
 
+    // Search company policies for relevant context
+    const relevantPolicies = await searchCompanyPolicies(
+      content,
+      config.openaiApiKey
+    );
+    const context = relevantPolicies.map((match) => match.content).join("\n");
+
     // Start title generation in parallel if this is the first message
     let titleGenerationPromise: Promise<string | null> = Promise.resolve(null);
     if (isFirstMessage) {
@@ -122,11 +179,29 @@ export default defineApiEventHandler({
       .where(eq(messages.conversation_id, conversationId))
       .orderBy(messages.created_at);
 
-    // Convert to OpenAI message format
-    const messagesForAI = conversationHistory.map((msg) => ({
+    // Convert to OpenAI message format, excluding the current user message since we'll add it with context
+    const messagesForAI = conversationHistory.slice(0, -1).map((msg) => ({
       role: msg.role as "user" | "assistant" | "system",
       content: msg.content,
     }));
+
+    // Add system message with company policy context
+    const systemMessage = {
+      role: "system" as const,
+      content: `You are a helpful assistant that answers questions about company policies. 
+         You are given a context and a question. You should answer the question based on the context. 
+         If you don't know the answer based on the provided context, say 'I don't know' or 'I don't have information about that in our company policies'.
+         Only answer questions related to company policies. If the question is not related to company policies, politely redirect the user to ask about company policies.
+         
+         <context>${context}</context>`,
+    };
+
+    // Add the system message and current user message
+    messagesForAI.unshift(systemMessage);
+    messagesForAI.push({
+      role: "user" as const,
+      content: content,
+    });
 
     // Set headers for streaming
     setResponseHeaders(event, {
