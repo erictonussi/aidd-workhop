@@ -40,6 +40,9 @@ export default defineNuxtConfig({
      */
     componentDir: "./app/components/ui",
   },
+  runtimeConfig: {
+    openaiApiKey: "",
+  },
   nitro: {
     experimental: {
       openAPI: true,
