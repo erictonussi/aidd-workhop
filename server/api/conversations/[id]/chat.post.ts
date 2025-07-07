@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { conversations, messages } from "../../../db/drizzle-schema";
+import { createOpenAI } from "@ai-sdk/openai";
+import { streamText } from "ai";
 
 defineRouteMeta({
   openAPI: {
@@ -48,6 +50,7 @@ export default defineApiEventHandler({
   }),
   handler: async (event, { id, content }) => {
     const db = useDb();
+    const config = useRuntimeConfig();
 
     // Convert string ID to number
     const conversationId = parseInt(id);
@@ -85,6 +88,19 @@ export default defineApiEventHandler({
       .set({ updated_at: new Date() })
       .where(eq(conversations.id, conversationId));
 
+    // Get conversation history for context
+    const conversationHistory = await db
+      .select()
+      .from(messages)
+      .where(eq(messages.conversation_id, conversationId))
+      .orderBy(messages.created_at);
+
+    // Convert to OpenAI message format
+    const messagesForAI = conversationHistory.map((msg) => ({
+      role: msg.role as "user" | "assistant" | "system",
+      content: msg.content,
+    }));
+
     // Set headers for streaming
     setResponseHeaders(event, {
       "Content-Type": "text/plain; charset=utf-8",
@@ -92,39 +108,42 @@ export default defineApiEventHandler({
       Connection: "keep-alive",
     });
 
-    // Create a dummy AI response
-    const aiResponse =
-      "I'm a dummy AI response. This is just a placeholder response that will be replaced with real AI integration later. I'm simulating a streaming response by sending this text gradually.";
-
     let accumulatedResponse = "";
 
-    // Stream the response
+    // Create OpenAI client with API key
+    const openai = createOpenAI({
+      apiKey: config.openaiApiKey,
+    });
+
+    // Create AI stream
+    const result = await streamText({
+      model: openai("gpt-3.5-turbo"),
+      messages: messagesForAI,
+    });
+
+    // Return the streaming response
     return new ReadableStream({
       async start(controller) {
-        const words = aiResponse.split(" ");
+        const encoder = new TextEncoder();
 
-        for (let i = 0; i < words.length; i++) {
-          const word = words[i];
-          const chunk = i === 0 ? word : " " + word;
-          accumulatedResponse += chunk;
+        try {
+          for await (const textDelta of result.textStream) {
+            accumulatedResponse += textDelta;
+            controller.enqueue(encoder.encode(textDelta));
+          }
 
-          // Send chunk
-          const encoder = new TextEncoder();
-          controller.enqueue(encoder.encode(chunk));
+          // Save the complete AI response to database
+          await db.insert(messages).values({
+            conversation_id: conversationId,
+            content: accumulatedResponse,
+            role: "assistant",
+          });
 
-          // Add delay to simulate real streaming
-          await new Promise((resolve) => setTimeout(resolve, 100));
+          controller.close();
+        } catch (error) {
+          console.error("Streaming error:", error);
+          controller.error(error);
         }
-
-        // Save the complete AI response to database
-        await db.insert(messages).values({
-          conversation_id: conversationId,
-          content: accumulatedResponse,
-          role: "assistant",
-        });
-
-        // Close the stream
-        controller.close();
       },
     });
   },

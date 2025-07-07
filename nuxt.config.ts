@@ -29,6 +29,9 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
+  runtimeConfig: {
+    openaiApiKey: "",
+  },
   shadcn: {
     /**
      * Prefix for all the imported component

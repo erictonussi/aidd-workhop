@@ -48,19 +48,31 @@ async function sendMessage() {
     emit("streamingStarted");
 
     // Send the message to the streaming endpoint
-    const response = await $fetch<ReadableStream>(
+    // ESLint disable needed for streaming response handling
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const response = await (global as any).fetch(
       `/api/conversations/${props.conversationId}/chat`,
       {
         method: "POST",
-        body: {
-          content,
+        headers: {
+          "Content-Type": "application/json",
         },
-        responseType: "stream",
+        body: JSON.stringify({ content }),
       }
     );
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body");
+    }
+
     // Handle the streaming response
-    const reader = response.pipeThrough(new TextDecoderStream()).getReader();
+    const reader = response.body
+      .pipeThrough(new TextDecoderStream())
+      .getReader();
 
     try {
       while (true) {
@@ -69,7 +81,9 @@ async function sendMessage() {
         if (done) break;
 
         // Emit streaming chunk to update UI
-        emit("streamingChunk", value);
+        if (value) {
+          emit("streamingChunk", value);
+        }
       }
     } finally {
       reader.releaseLock();
@@ -81,6 +95,9 @@ async function sendMessage() {
     console.error("Error sending message:", error);
     // Restore the message content if there was an error
     messageContent.value = content;
+
+    // End streaming on error
+    emit("streamingEnded");
   } finally {
     isLoading.value = false;
 
