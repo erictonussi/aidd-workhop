@@ -22,7 +22,6 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@nuxt/image",
     "@vueuse/nuxt",
-    "@nuxtjs/mdc",
   ],
   components: [
     {
