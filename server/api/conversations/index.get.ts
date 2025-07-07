@@ -1,21 +1,35 @@
----
-to: server/api/<%= plural %>/index.get.ts
----
 import { z } from "zod";
+import { conversations } from "../../db/drizzle-schema";
+import { desc, like, count } from "drizzle-orm";
 
 defineRouteMeta({
   // TODO: fill out meta as needed
   openAPI: {
-    tags: ["<%= plural %>"],
-    description: "Get all <%= plural %>",
+    tags: ["conversations"],
+    description: "Get all conversations",
     parameters: [
-      { in: "query", name: "page", required: false, schema: { type: "number", default: 1 } },
-      { in: "query", name: "limit", required: false, schema: { type: "number", default: 20 } },
-      { in: "query", name: "search", required: false, schema: { type: "string" } },
+      {
+        in: "query",
+        name: "page",
+        required: false,
+        schema: { type: "number", default: 1 },
+      },
+      {
+        in: "query",
+        name: "limit",
+        required: false,
+        schema: { type: "number", default: 20 },
+      },
+      {
+        in: "query",
+        name: "search",
+        required: false,
+        schema: { type: "string" },
+      },
     ],
     responses: {
       200: {
-        description: "List of <%= plural %>",
+        description: "List of conversations",
         content: {
           "application/json": {
             schema: {
@@ -30,10 +44,11 @@ defineRouteMeta({
                   type: "array",
                   items: {
                     type: "object",
-                    // TODO: Customize your properties here
                     properties: {
-                      id: { type: "string" },
-                      someField: { type: "string" },
+                      id: { type: "number" },
+                      title: { type: "string" },
+                      created_at: { type: "string", format: "date-time" },
+                      updated_at: { type: "string", format: "date-time" },
                     },
                   },
                 },
@@ -68,18 +83,38 @@ export default defineApiEventHandler({
   }),
   handler: async (event, { page, limit, search }) => {
     const db = useDb();
-    
-    // TODO: implement API functionality
-    
-    // TODO: modify response as needed
+
+    // Build where condition
+    const whereCondition = search
+      ? like(conversations.title, `%${search}%`)
+      : undefined;
+
+    // Get total count for pagination
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(conversations)
+      .where(whereCondition);
+
+    const total = totalResult.count;
+
+    // Get paginated results
+    const offset = (page - 1) * limit;
+    const data = await db
+      .select()
+      .from(conversations)
+      .where(whereCondition)
+      .orderBy(desc(conversations.updated_at))
+      .limit(limit)
+      .offset(offset);
+
     return definePaginatedApiResponse(event, {
-      data: [], // TODO: Replace with actual data
-      statusMessage: "Retrieved <%= plural %> successfully",
+      data,
+      statusMessage: "Retrieved conversations successfully",
       pagination: {
         page,
         limit,
-        total: 0, // TODO: Set actual total count
+        total,
       },
     });
   },
-}); 
+});

@@ -1,19 +1,18 @@
----
-to: server/api/<%= plural %>/[id].delete.ts
----
 import { z } from "zod";
+import { eq } from "drizzle-orm";
+import { conversations } from "../../db/drizzle-schema";
 
 defineRouteMeta({
   // TODO: fill out meta as needed
   openAPI: {
-    tags: ["<%= plural %>"],
-    description: "Delete a <%= name %> by ID",
+    tags: ["conversations"],
+    description: "Delete a conversation by ID",
     parameters: [
       { in: "path", name: "id", required: true, schema: { type: "string" } },
     ],
     responses: {
       200: {
-        description: "<%= Name %> deleted successfully",
+        description: "Conversation deleted successfully",
         content: {
           "application/json": {
             schema: {
@@ -27,7 +26,7 @@ defineRouteMeta({
                 data: {
                   type: "object",
                   properties: {
-                    id: { type: "string" },
+                    id: { type: "number" },
                     deleted: { type: "boolean" },
                   },
                 },
@@ -37,7 +36,7 @@ defineRouteMeta({
         },
       },
       404: {
-        description: "<%= Name %> not found",
+        description: "Conversation not found",
       },
     },
   },
@@ -51,13 +50,36 @@ export default defineApiEventHandler({
   // guards: [userIsLoggedInGuard], // TODO: Add authentication if needed
   handler: async (event, { id }) => {
     const db = useDb();
-    
-    // TODO: implement API functionality
-    
-    // TODO: modify response as needed
+
+    // Convert string ID to number
+    const conversationId = parseInt(id);
+    if (isNaN(conversationId)) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Invalid conversation ID",
+      });
+    }
+
+    // Check if conversation exists
+    const [existingConversation] = await db
+      .select()
+      .from(conversations)
+      .where(eq(conversations.id, conversationId))
+      .limit(1);
+
+    if (!existingConversation) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: "Conversation not found",
+      });
+    }
+
+    // Delete the conversation (this will cascade delete messages due to the foreign key constraint)
+    await db.delete(conversations).where(eq(conversations.id, conversationId));
+
     return defineApiResponse(event, {
-      data: { id, deleted: true },
-      statusMessage: "<%= Name %> deleted successfully",
+      data: { id: conversationId, deleted: true },
+      statusMessage: "Conversation deleted successfully",
     });
   },
-}); 
+});

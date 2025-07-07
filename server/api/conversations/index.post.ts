@@ -1,32 +1,27 @@
----
-to: server/api/<%= plural %>/[id].put.ts
----
 import { z } from "zod";
+import { conversations } from "../../db/drizzle-schema";
 
 defineRouteMeta({
   // TODO: fill out meta as needed
   openAPI: {
-    tags: ["<%= plural %>"],
-    description: "Update a <%= name %> by ID",
-    parameters: [
-      { in: "path", name: "id", required: true, schema: { type: "string" } },
-    ],
+    tags: ["conversations"],
+    description: "Create a new conversation",
     requestBody: {
       content: {
         "application/json": {
           schema: {
             type: "object",
-            // TODO: Customize your properties here
             properties: {
-              someField: { type: "string" },
+              title: { type: "string" },
             },
+            required: ["title"],
           },
         },
       },
     },
     responses: {
-      200: {
-        description: "<%= Name %> updated successfully",
+      201: {
+        description: "Conversation created successfully",
         content: {
           "application/json": {
             schema: {
@@ -39,10 +34,11 @@ defineRouteMeta({
                 message: { type: "string" },
                 data: {
                   type: "object",
-                  // TODO: Customize your properties here
                   properties: {
-                    id: { type: "string" },
-                    someField: { type: "string" },
+                    id: { type: "number" },
+                    title: { type: "string" },
+                    created_at: { type: "string", format: "date-time" },
+                    updated_at: { type: "string", format: "date-time" },
                   },
                 },
               },
@@ -50,8 +46,8 @@ defineRouteMeta({
           },
         },
       },
-      404: {
-        description: "<%= Name %> not found",
+      400: {
+        description: "Invalid input",
       },
       422: {
         description: "Validation error",
@@ -61,22 +57,30 @@ defineRouteMeta({
 });
 
 export default defineApiEventHandler({
-  // TODO: fill out validation as needed
   validation: z.object({
-    id: z.string().min(1, "ID is required"),
-    someField: z.string().min(1, "SomeField is required"),
-    // TODO: Add validation for your <%= name %> properties
+    title: z
+      .string()
+      .min(1, "Title is required")
+      .max(255, "Title must be less than 255 characters"),
   }),
   // guards: [userIsLoggedInGuard], // TODO: Add authentication if needed
-  handler: async (event, { id, ...updateData }) => {
+  handler: async (event, { title }) => {
     const db = useDb();
-    
-    // TODO: implement API functionality
-    
-    // TODO: modify response as needed
+
+    // Set status code to 201 for creation
+    setResponseStatus(event, 201);
+
+    // Create the conversation
+    const [newConversation] = await db
+      .insert(conversations)
+      .values({
+        title,
+      })
+      .returning();
+
     return defineApiResponse(event, {
-      data: { id, ...updateData }, // TODO: Replace with actual updated <%= name %> data
-      statusMessage: "<%= Name %> updated successfully",
+      data: newConversation,
+      statusMessage: "Conversation created successfully",
     });
   },
-}); 
+});

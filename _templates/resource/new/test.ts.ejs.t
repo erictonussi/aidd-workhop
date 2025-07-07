@@ -2,6 +2,7 @@
 to: tests/e2e/api-<%= plural %>.spec.ts
 ---
 import { test, expect } from '@nuxt/test-utils/playwright'
+import { $fetch } from 'ofetch'
 
 test.describe('/<%= plural %> API endpoints', () => {
   let _created<%= Name %>Id: string
