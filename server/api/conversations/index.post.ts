@@ -12,9 +12,9 @@ defineRouteMeta({
           schema: {
             type: "object",
             properties: {
-              title: { type: "string" },
+              title: { type: "string", default: "New Conversation" },
             },
-            required: ["title"],
+            required: [],
           },
         },
       },
@@ -61,7 +61,9 @@ export default defineApiEventHandler({
     title: z
       .string()
       .min(1, "Title is required")
-      .max(255, "Title must be less than 255 characters"),
+      .max(255, "Title must be less than 255 characters")
+      .optional()
+      .default("New Conversation"),
   }),
   // guards: [userIsLoggedInGuard], // TODO: Add authentication if needed
   handler: async (event, { title }) => {
@@ -74,7 +76,7 @@ export default defineApiEventHandler({
     const [newConversation] = await db
       .insert(conversations)
       .values({
-        title,
+        title: title || "New Conversation",
       })
       .returning();
 

@@ -59,7 +59,7 @@ function onStreamingEnded() {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen bg-background">
+  <div class="flex flex-col h-[calc(100vh-100px)] bg-background">
     <!-- Chat Messages Area -->
     <div class="flex-1 overflow-hidden">
       <ChatMessageList

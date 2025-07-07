@@ -14,6 +14,12 @@ const {
 // Extract conversations array from the response
 const conversations = computed(() => conversationsResponse.value?.data || []);
 
+// Watch for conversation updates from other components
+const { refreshTrigger } = useConversationUpdates();
+watch(refreshTrigger, () => {
+  refresh();
+});
+
 /**
  * Refreshes the conversation list
  */

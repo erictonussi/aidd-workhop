@@ -80,9 +80,31 @@ async function sendMessage() {
 
         if (done) break;
 
-        // Emit streaming chunk to update UI
         if (value) {
-          emit("streamingChunk", value);
+          // Check for title updates in the stream
+          if (value.includes("__TITLE_UPDATE__:")) {
+            const titleMatch = value.match(
+              /__TITLE_UPDATE__:(.+?)__END_TITLE__/
+            );
+            if (titleMatch) {
+              const _newTitle = titleMatch[1];
+              // Trigger conversation refresh immediately when title is received
+              const { triggerConversationRefresh } = useConversationUpdates();
+              triggerConversationRefresh();
+
+              // Remove the title update from the stream content
+              const cleanedValue = value.replace(
+                /__TITLE_UPDATE__:.+?__END_TITLE__/g,
+                ""
+              );
+              if (cleanedValue) {
+                emit("streamingChunk", cleanedValue);
+              }
+            }
+          } else {
+            // Regular streaming chunk
+            emit("streamingChunk", value);
+          }
         }
       }
     } finally {
