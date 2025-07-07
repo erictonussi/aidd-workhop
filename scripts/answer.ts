@@ -25,31 +25,33 @@ async function getQueryEmbedding(query: string): Promise<number[]> {
 
 // topK is the number of results to return
 async function searchcompanyPolicies(query: string, topK = 5) {
-  console.log("🔍 Searching for: ", query);
   const embedding = await getQueryEmbedding(query);
 
+  // Use vector_top_k to find the most similar vectors, then join with the actual table
+  // vector_top_k returns records with the primary key/rowid of matching rows
   const matches = await db
     .select({
-      distance: sql<number>`vector_distance_cos(${
-        schema.companyPolicies.embedding
-      }, vector32(${JSON.stringify(embedding)}))`,
+      id: sql`vt.id`,
       content: schema.companyPolicies.content,
       filepath: schema.companyPolicies.filepath,
       chunkNumber: schema.companyPolicies.chunkNumber,
     })
-    .from(schema.companyPolicies)
-    .orderBy(
-      sql`vector_distance_cos(${
-        schema.companyPolicies.embedding
-      }, vector32(${JSON.stringify(embedding)}))`
+    .from(
+      sql`vector_top_k('company_policies_vector_idx', vector32(${JSON.stringify(
+        embedding
+      )}), ${topK}) as vt`
     )
-    .limit(topK);
+    .leftJoin(
+      schema.companyPolicies,
+      sql`${schema.companyPolicies.id} = vt.id`
+    );
 
   console.log(`\n🔍 Top ${topK} results for: "${query}"\n`);
   for (const [i, match] of matches.entries()) {
     console.log(`--- Result ${i + 1} ---`);
-    console.log(match.content);
-    console.log(`Source: ${match.filepath} (Chunk ${match.chunkNumber})\n`);
+    console.log(`Source: ${match.filepath} (Chunk ${match.chunkNumber})`);
+    console.log(`Content: ${match.content?.substring(0, 200)}...`);
+    console.log("");
   }
   return matches;
 }

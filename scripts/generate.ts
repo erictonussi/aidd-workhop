@@ -13,10 +13,10 @@ const openai = new OpenAI({
 });
 
 const db = useDb();
-db.run(sql`
-  CREATE INDEX IF NOT EXISTS mcp_docs_vector_idx
-  ON mcp_docs(embedding)
-  USING vector_cosine(3);
+
+await db.run(sql`
+  CREATE INDEX IF NOT EXISTS company_policies_vector_idx
+  ON company_policies(libsql_vector_idx(embedding));
 `);
 
 const directory = path.join(process.cwd(), folder);
