@@ -5,6 +5,8 @@ export default defineVitestConfig({
     environment: "nuxt",
     // Enable globals for cleanup
     globals: true,
+    // Global setup file
+    setupFiles: ["./tests/vitest-setup.ts"],
     // Include patterns for co-located tests
     include: [
       "**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",

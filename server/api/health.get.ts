@@ -1,4 +1,5 @@
 import { z } from "zod";
+import packageJson from "../../package.json";
 
 export default defineApiEventHandler({
   validation: z.object({
@@ -9,7 +10,7 @@ export default defineApiEventHandler({
       data: payload.data,
       status: "healthy",
       timestamp: new Date().toISOString(),
-      version: "1.0.0",
+      version: packageJson.version,
     };
   },
 });

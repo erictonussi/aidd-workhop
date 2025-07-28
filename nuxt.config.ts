@@ -48,5 +48,9 @@ export default defineNuxtConfig({
         version: "1.0",
       },
     },
+    ignore: [
+      "**/*.test.{js,ts}",
+      "**/*.spec.{js,ts}",
+    ],
   },
 });
