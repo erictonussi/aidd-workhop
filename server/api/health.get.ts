@@ -6,11 +6,14 @@ export default defineApiEventHandler({
     data: z.string().optional(),
   }),
   handler: async (event, payload) => {
-    return {
-      data: payload.data,
-      status: "healthy",
-      timestamp: new Date().toISOString(),
-      version: packageJson.version,
-    };
+    return defineApiResponse(event, {
+      data: {
+        requestPayload: payload.data,
+        timestamp: new Date().toISOString(),
+        version: packageJson.version,
+        status: "healthy",
+      },
+      statusMessage: "Health check successful",
+    });
   },
 });

@@ -36,7 +36,7 @@ try {
 // Check that development server is running before running tests
 try {
   const response = await fetch(env.NUXT_APP_URL + "/api/health");
-  if (!response.ok || (await response.json()).status !== "healthy") {
+  if (!response.ok || (await response.json()).data.status !== "healthy") {
     throw new Error(
       "Development server is not running. It is required to run the tests. Please start the development server with `nr dev` and try again."
     );
