@@ -38,6 +38,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     experimental: {
+      tasks: true,
       openAPI: true,
     },
     openAPI: {
@@ -48,9 +49,6 @@ export default defineNuxtConfig({
         version: "1.0",
       },
     },
-    ignore: [
-      "**/*.test.{js,ts}",
-      "**/*.spec.{js,ts}",
-    ],
+    ignore: ["**/*.test.{js,ts}", "**/*.spec.{js,ts}"],
   },
 });

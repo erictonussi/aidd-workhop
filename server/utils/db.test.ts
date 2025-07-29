@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { describe, it, expect } from "vitest";
-import { useDb } from "./db";
+import { useDb, useDbSchema } from "./db";
 
 describe("Database Utilities", () => {
   it("should have db function available", () => {
@@ -17,5 +17,11 @@ describe("Database Utilities", () => {
   it("should be accessible and callable", () => {
     // This verifies the function exists and is callable
     expect(() => useDb()).not.toThrow();
+  });
+
+  it("should return the schema", () => {
+    const schema = useDbSchema();
+    expect(schema).toBeDefined();
+    expect(typeof schema).toBe("object");
   });
 });
