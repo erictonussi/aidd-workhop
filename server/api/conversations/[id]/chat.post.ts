@@ -52,6 +52,13 @@ export default defineApiEventHandler({
     const db = useDb();
     const config = useRuntimeConfig();
 
+    if (!config.openaiApiKey) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: "OpenAI API key is not configured",
+      });
+    }
+
     // Convert string ID to number
     const conversationId = parseInt(id);
     if (isNaN(conversationId)) {

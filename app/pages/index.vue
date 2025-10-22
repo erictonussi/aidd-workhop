@@ -24,10 +24,10 @@ useSeoMeta({
           </UiButton>
         </NuxtLink>
 
-        <NuxtLink to="/playground">
+        <NuxtLink to="/chat">
           <UiButton variant="outline" size="lg" class="w-full sm:w-auto">
-            <Icon name="lucide:play" class="w-5 h-5 mr-2" />
-            Component Playground
+            <Icon name="lucide:message-square" class="w-5 h-5 mr-2" />
+            Chat with AI
           </UiButton>
         </NuxtLink>
       </div>
