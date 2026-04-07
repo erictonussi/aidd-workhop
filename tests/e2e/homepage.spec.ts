@@ -1,20 +1,20 @@
-import { expect, test } from "@nuxt/test-utils/playwright";
+import { expect, test } from "@playwright/test";
 
 test.describe("Homepage", () => {
-  test("displays the homepage correctly", async ({ page, goto }) => {
-    await goto("/", { waitUntil: "hydration" });
+  test("displays the homepage correctly", async ({ page }) => {
+    await page.goto("/");
 
     // Check that the page loads and displays the expected content
     await expect(
-      page.getByRole("heading", { name: "Hello World" })
+      page.getByRole("heading", { name: "Welcome to Our Blog" })
     ).toBeVisible();
 
     // Check that the page title is set correctly
     await expect(page).toHaveTitle(/home/i);
   });
 
-  test("navigates to playground page", async ({ page, goto }) => {
-    await goto("/", { waitUntil: "hydration" });
+  test("navigates to playground page", async ({ page }) => {
+    await page.goto("/");
 
     // Navigate to playground if there's a link
     if ((await page.locator('a[href="/playground"]').count()) > 0) {
@@ -23,19 +23,19 @@ test.describe("Homepage", () => {
     }
   });
 
-  test("page is responsive", async ({ page, goto }) => {
+  test("page is responsive", async ({ page }) => {
     // Test mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await goto("/", { waitUntil: "hydration" });
+    await page.goto("/");
 
     await expect(
-      page.getByRole("heading", { name: "Hello World" })
+      page.getByRole("heading", { name: "Welcome to Our Blog" })
     ).toBeVisible();
 
     // Test desktop viewport
     await page.setViewportSize({ width: 1920, height: 1080 });
     await expect(
-      page.getByRole("heading", { name: "Hello World" })
+      page.getByRole("heading", { name: "Welcome to Our Blog" })
     ).toBeVisible();
   });
 });

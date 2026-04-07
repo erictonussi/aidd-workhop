@@ -1,10 +1,10 @@
-import { test, expect } from "@nuxt/test-utils/playwright";
+import { test, expect } from "@playwright/test";
 
 test.describe("/conversations API endpoints", () => {
   let createdConversationId: number;
 
-  test("CRUD + chat flow", async ({ page, goto }) => {
-    await goto("/", { waitUntil: "hydration" });
+  test("CRUD + chat flow", async ({ page }) => {
+    await page.goto("/");
 
     const createRes = await page.request.post("/api/conversations", {
       data: { title: "E2E Conversation" },
