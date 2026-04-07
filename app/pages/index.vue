@@ -17,8 +17,15 @@ useSeoMeta({
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <NuxtLink to="/posts">
+        <NuxtLink to="/chat">
           <UiButton size="lg" class="w-full sm:w-auto">
+            <Icon name="lucide:message-circle" class="w-5 h-5 mr-2" />
+            Open Chat
+          </UiButton>
+        </NuxtLink>
+
+        <NuxtLink to="/posts">
+          <UiButton variant="outline" size="lg" class="w-full sm:w-auto">
             <Icon name="lucide:book-open" class="w-5 h-5 mr-2" />
             Read Our Posts
           </UiButton>
